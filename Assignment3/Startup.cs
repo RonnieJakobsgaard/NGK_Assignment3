@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Assignment3.Data;
+
 
 
 namespace Assignment3
@@ -28,17 +31,8 @@ namespace Assignment3
         {
             services.AddControllers();
 
-
-
-
-            //dependency injection
-            //2 errors i nedenstående:
-            //the type or namespace name 'ApplicationDbContext' could not be found...
-            //'IServiceCollection does not contain a definition for 'ApplicationDbContext'
-
-            //services.AddDbContext<ApplicationDbContext>(options =>
-              //  options.UseSqlServer(
-                //    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContext")));
         }
 
 
