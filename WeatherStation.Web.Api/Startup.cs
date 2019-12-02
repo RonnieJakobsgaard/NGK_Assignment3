@@ -45,7 +45,8 @@ namespace WeatherStation.Web.Api
 
             services.AddCors();
             services.AddMvc();
-
+            
+            services.AddSignalR();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -72,6 +73,8 @@ namespace WeatherStation.Web.Api
             }
             app.UseStaticFiles();
 
+            app.UseWebSockets();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -81,6 +84,8 @@ namespace WeatherStation.Web.Api
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
             app.UseCors(builder =>
                      builder.WithOrigins("http://localhost:53613")
