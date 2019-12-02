@@ -12,6 +12,7 @@ using WeatherStation.Web.Api.Data;
 using WeatherStation.Web.Api.Services;
 using Microsoft.AspNetCore.Identity;
 using WeatherStation.Web.Api.Models;
+using SignalRChat.Hubs;
 
 namespace WeatherStation.Web.Api
 {
