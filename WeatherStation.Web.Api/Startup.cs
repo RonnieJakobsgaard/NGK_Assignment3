@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherStation.Web.Api.Data;
 using WeatherStation.Web.Api.Services;
-using SignalRChat.Hubs;
 
 namespace WeatherStation.Web.Api
 {
@@ -45,11 +44,15 @@ namespace WeatherStation.Web.Api
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseWebSockets();
+
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
