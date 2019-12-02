@@ -21,9 +21,9 @@ namespace WeatherStation.Web.Api.Controllers
         }
 
         // GET: Measurement
-        public ActionResult Index(string startDate)
+        public ActionResult Index(string startTime, string endTime)
         {
-            if (!string.IsNullOrEmpty(startDate))
+            if (!string.IsNullOrEmpty(startTime) || !string.IsNullOrEmpty(endTime))
             {
                 //var sDate = DateTime.ParseExact(startDate, "dd-MM-yyyy", null);
                 //var eDate = DateTime.ParseExact(startDate, "dd-MM-yyyy", null);
@@ -57,20 +57,38 @@ namespace WeatherStation.Web.Api.Controllers
             return View(_measurementService.Get());
         }
 
+
+
         [HttpGet("Measurement/search")]
-        public ActionResult Search(string startDate, string endDate)
+        public ActionResult Search(string startTime, string endTime, string date)
         {
-            if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+            if (string.IsNullOrEmpty(startTime) && string.IsNullOrEmpty(endTime) && string.IsNullOrEmpty(date))
             {
                 return NotFound();
             }
-            // Test data
-            var lws = new LocalWeatherStation()
+
+            LocalWeatherStation lws = new LocalWeatherStation();
+
+            if (!string.IsNullOrEmpty(startTime) || !string.IsNullOrEmpty(endTime))
             {
-                Name = "TestStation",
-                Latitude = 2.555,
-                Longitude = 95.002
-            };
+                lws = new LocalWeatherStation()
+                {
+                    Name = "StartTime-EndTime",
+                    Latitude = 2.555,
+                    Longitude = 95.002
+                };
+            }
+
+            if (!string.IsNullOrEmpty(date))
+            {
+                lws = new LocalWeatherStation()
+                {
+                    Name = "Date",
+                    Latitude = 2.555,
+                    Longitude = 95.002
+                };
+            }
+
 
             IEnumerable<Measurement> measurements = new List<Measurement>()
                 {
@@ -79,6 +97,7 @@ namespace WeatherStation.Web.Api.Controllers
                         AirPressure = 5, Humidity = 5, LocalWeatherStation = lws, MeasurementId = 1,
                         Time = new DateTime(2019, 1, 1), Temperature = 2
                     },
+
                     new Measurement()
                     {
                         AirPressure = 2000, Humidity = 95, LocalWeatherStation = lws, MeasurementId = 2,
