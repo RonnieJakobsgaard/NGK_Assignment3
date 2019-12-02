@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using WeatherStation.Models;
+using WeatherStation.Web.Api.Models;
 
-namespace WeatherStation.Controllers
+namespace WeatherStation.Web.Api.Controllers
 {
     public class HomeController : Controller
     {

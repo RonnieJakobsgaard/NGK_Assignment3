@@ -1,6 +1,6 @@
 using System;
 
-namespace WeatherStation.Models
+namespace WeatherStation.Web.Api.Models
 {
     public class ErrorViewModel
     {

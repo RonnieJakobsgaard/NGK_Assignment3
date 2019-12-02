@@ -1,0 +1,70 @@
+﻿@model IEnumerable<WeatherStation.Web.Api.Models.Measurement>
+
+@{
+    ViewData["Title"] = "WeatherStation Data";
+}
+
+<h1>Index</h1>
+
+<!--
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+-->
+<form asp-controller="Measurement" asp-action="Index" method="get">
+    <p>
+        StartDate: <input type="text" name="startDate" placeholder="dd-mm-yyyy" style="margin-left: 5px"/>
+        EndDate: <input type="text" name="endDate" placeholder="dd-mm-yyyy" style="margin-left: 5px"/>
+        <input type="submit" value="Filter"/> 
+    </p>
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.LocalWeatherStation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Temperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Humidity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirPressure)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocalWeatherStation.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Temperature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Humidity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AirPressure)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MeasurementId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MeasurementId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MeasurementId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

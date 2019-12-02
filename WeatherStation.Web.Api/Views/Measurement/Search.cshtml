@@ -1,0 +1,50 @@
+﻿@model IEnumerable<WeatherStation.Web.Api.Models.Measurement>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Temperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Humidity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AirPressure)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Temperature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Humidity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AirPressure)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MeasurementId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MeasurementId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MeasurementId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
