@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WeatherStation.Web.Api.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace WeatherStation.Web.Api.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext()
         {
@@ -49,6 +51,11 @@ namespace WeatherStation.Web.Api.Data
             modelBuilder.Entity<LocalWeatherStation>()
                 .HasMany<Measurement>(m => m.Measurements)
                 .WithOne(m => m.LocalWeatherStation);
+
+
+            base.OnModelCreating(modelBuilder);
         }
     }
+
+   
 }
