@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherStation.Web.Api.Data;
 using WeatherStation.Web.Api.Services;
+using SignalRChat.Hubs;
 
 namespace WeatherStation.Web.Api
 {
