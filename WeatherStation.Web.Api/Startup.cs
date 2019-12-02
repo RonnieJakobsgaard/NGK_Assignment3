@@ -96,6 +96,8 @@ namespace WeatherStation.Web.Api
 
             //app.UseMvc();
             app.UseAuthentication();
+
+
         }
     }
 }
