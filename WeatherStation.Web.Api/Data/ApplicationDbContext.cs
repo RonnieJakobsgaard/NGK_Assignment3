@@ -35,6 +35,7 @@ namespace WeatherStation.Web.Api.Data
 
         public DbSet<Measurement> Measurements { get; set; }
         public DbSet<LocalWeatherStation> WeatherStations { get; set; }
+        public DbSet<User> users { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,11 +47,27 @@ namespace WeatherStation.Web.Api.Data
             modelBuilder.Entity<LocalWeatherStation>()
                 .HasKey(k => new { k.Name });
 
+            modelBuilder.Entity<User>()
+                .HasKey(k => new {k.UserName });
+
+
+
+
 
             // One To Many
             modelBuilder.Entity<LocalWeatherStation>()
                 .HasMany<Measurement>(m => m.Measurements)
                 .WithOne(m => m.LocalWeatherStation);
+
+
+
+
+           
+            modelBuilder.Entity<User>()
+                .HasMany<LocalWeatherStation>(u => u.WeatherStations)
+                .WithOne(u => u.User);
+
+
 
 
             base.OnModelCreating(modelBuilder);
