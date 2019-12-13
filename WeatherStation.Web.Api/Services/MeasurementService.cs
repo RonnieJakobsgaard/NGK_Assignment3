@@ -61,5 +61,10 @@ namespace WeatherStation.Web.Api.Services
         {
             return _db.Measurements.Where(m => m.Time >= startDate && m.Time <= endDate).ToList();
         }
+
+        public LocalWeatherStation FindWeatherStation(string name)
+        {
+            return _db.WeatherStations.SingleOrDefault(w => w.Name == name);
+        }
     }
 }

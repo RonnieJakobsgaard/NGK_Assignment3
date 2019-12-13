@@ -27,39 +27,8 @@ namespace WeatherStation.Web.Api.Controllers
         }
 
         // GET: Measurement
-        public ActionResult Index(string startTime, string endTime)
+        public ActionResult Index()
         {
-            if (!string.IsNullOrEmpty(startTime) || !string.IsNullOrEmpty(endTime))
-            {
-                //var sDate = DateTime.ParseExact(startDate, "dd-MM-yyyy", null);
-                //var eDate = DateTime.ParseExact(startDate, "dd-MM-yyyy", null);
-                //var measurements = _measurementService.Search(sDate, eDate);
-
-                // Test data
-                var lws = new LocalWeatherStation()
-                {
-                    Name = "TestStation",
-                    Latitude = 2.555,
-                    Longitude = 95.002
-                };
-
-                var measurements = new List<Measurement>()
-                {
-                    new Measurement()
-                    {
-                        AirPressure = 5, Humidity = 5, LocalWeatherStation = lws, MeasurementId = 1,
-                        Time = new DateTime(2019, 1, 1), Temperature = 2
-                    },
-                    new Measurement()
-                    {
-                        AirPressure = 2000, Humidity = 95, LocalWeatherStation = lws, MeasurementId = 2,
-                        Time = new DateTime(2019, 1, 10), Temperature = 5
-                    }
-                };
-
-                return View(measurements);
-            }
-
             return View(_measurementService.Get());
         }
 
@@ -73,45 +42,47 @@ namespace WeatherStation.Web.Api.Controllers
                 return NotFound();
             }
 
-            LocalWeatherStation lws = new LocalWeatherStation();
+            var measurements = new List<Measurement>();
+            var measurementsToDisplay = new List<Measurement>();
 
-            if (!string.IsNullOrEmpty(startTime) || !string.IsNullOrEmpty(endTime))
+            if (!string.IsNullOrEmpty(startTime) && !string.IsNullOrEmpty(endTime))
             {
-                lws = new LocalWeatherStation()
+                measurements = _measurementService.Get();
+                var st = TimeSpan.ParseExact(startTime, "hhmm", null);
+                var et = TimeSpan.ParseExact(endTime, "hhmm", null);
+
+
+                foreach (var measurement in measurements)
                 {
-                    Name = "StartTime-EndTime",
-                    Latitude = 2.555,
-                    Longitude = 95.002
-                };
+                    if (measurement.Time.TimeOfDay >= st && measurement.Time.TimeOfDay <= et)
+                    {
+                        measurementsToDisplay.Add(measurement);
+                    }
+                }
             }
 
             if (!string.IsNullOrEmpty(date))
             {
-                lws = new LocalWeatherStation()
+                measurements = _measurementService.Get();
+                DateTime searchTime = DateTime.ParseExact(date, "dd-MM-yyyy", null);
+                
+                foreach (var measurement in measurements)
                 {
-                    Name = "Date",
-                    Latitude = 2.555,
-                    Longitude = 95.002
-                };
+                    if (measurement.Time.Date >= searchTime.Date && measurement.Time.Date <= searchTime.Date)
+                    {
+                        measurementsToDisplay.Add(measurement);
+                    }
+                }
             }
 
-
-            IEnumerable<Measurement> measurements = new List<Measurement>()
-                {
-                    new Measurement()
-                    {
-                        AirPressure = 5, Humidity = 5, LocalWeatherStation = lws, MeasurementId = 1,
-                        Time = new DateTime(2019, 1, 1), Temperature = 2
-                    },
-
-                    new Measurement()
-                    {
-                        AirPressure = 2000, Humidity = 95, LocalWeatherStation = lws, MeasurementId = 2,
-                        Time = new DateTime(2019, 1, 10), Temperature = 5
-                    }
-                };
-
-            return View(measurements);
+            if (measurementsToDisplay.Count == 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return View(measurementsToDisplay);
+            }
         }
 
         // GET: Measurement/Details/5
@@ -129,20 +100,48 @@ namespace WeatherStation.Web.Api.Controllers
         // POST: Measurement/Create
         [Authorize(AuthenticationSchemes = "JwtBearer")]
         [HttpPost]
-        public ActionResult Create([FromBody] Measurement measurement)
+        public ActionResult Create([FromBody] MeasurementModel model)
         {
             try
             {
                 // TODO: Add insert logic here
+
+                var weatherStation = _measurementService.FindWeatherStation(model.Location.Name);
+
+                if (weatherStation == null)
+                {
+                    weatherStation = new LocalWeatherStation
+                    {
+                        Name = model.Location.Name,
+                        Longitude = model.Location.Longitude,
+                        Latitude = model.Location.Latitude
+                    };
+                }
+
+                var measurement = new Measurement
+                {
+                    LocalWeatherStation = weatherStation,
+                    Temperature = model.Temperature,
+                    AirPressure = model.AirPressure,
+                    Humidity = model.Humidity,
+                    Time = DateTime.Now
+                };
+
+
+                if (weatherStation.Measurements == null)
+                {
+                    weatherStation.Measurements = new List<Measurement>();
+                }
+
+                weatherStation.Measurements.Add(measurement);
+
                 _measurementService.Create(measurement);
 
-
-                
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return NotFound();
             }
         }
 
