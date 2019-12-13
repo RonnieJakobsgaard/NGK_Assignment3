@@ -15,5 +15,19 @@ namespace WeatherStation.Web.Api.Controllers
     {
         private readonly IHubContext<ChatHub> _chatHubContext;
         private readonly counter _counter;
+
+        public CountController(IHubContext<ChatHub> chatHubContext, counter counter)
+        {
+            _chatHubContext = chatHubContext;
+            _counter = counter;
+        }
+
+        [HttpGet("inc")]
+
+        public async Task<IActionResult> Inc()
+        {
+            //await _chatHubContext.Clients.All.SendAsync("countUpdate", _counter.Inc());
+            return Ok();
+        }
     }
 }

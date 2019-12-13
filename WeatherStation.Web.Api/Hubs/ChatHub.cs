@@ -1,4 +1,6 @@
 ﻿//using Microsoft.AspNet.SignalR.Hubs;
+
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
