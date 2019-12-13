@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,8 +44,10 @@ namespace WeatherStation.Web.Api
 
             services.AddCors();
             services.AddMvc();
-            
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); // Er denne nødvendig??
             services.AddSignalR();
+            services.AddSingleton<counter>();
 
             services.AddAuthentication(options =>
                 {
