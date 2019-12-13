@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
 using SignalRChat.Hubs;
 using WeatherStation.Web.Api.Models;
@@ -11,7 +11,7 @@ namespace WeatherStation.Web.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CountController : Controller
+    public class CountController : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHubContext;
         private readonly counter _counter;
@@ -26,7 +26,7 @@ namespace WeatherStation.Web.Api.Controllers
 
         public async Task<IActionResult> Inc()
         {
-            //await _chatHubContext.Clients.All.SendAsync("countUpdate", _counter.Inc());
+            await _chatHubContext.Clients.All.SendAsync("countUpdate", _counter.Inc());
             return Ok();
         }
     }
