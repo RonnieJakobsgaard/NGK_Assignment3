@@ -24,7 +24,7 @@ namespace WeatherStation.Web.Api.Controllers
 
         [HttpGet("inc")]
 
-        public async Task<IActionResult> Inc()
+        public async Task<IActionResult> Get()
         {
             await _chatHubContext.Clients.All.SendAsync("countUpdate", _counter.Inc());
             return Ok();
