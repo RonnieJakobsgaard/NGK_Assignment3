@@ -9,8 +9,8 @@ using WeatherStation.Web.Api.Models;
 
 namespace WeatherStation.Web.Api.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class CountController : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHubContext;
