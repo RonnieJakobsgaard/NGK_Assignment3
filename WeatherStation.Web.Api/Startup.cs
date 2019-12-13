@@ -45,6 +45,7 @@ namespace WeatherStation.Web.Api
             services.AddMvc();
             
             services.AddSignalR();
+            services.AddSingleton<counter>();
 
             services.AddAuthentication(options =>
                 {
