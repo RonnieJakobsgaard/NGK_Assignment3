@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-
 
 namespace WeatherStation.Web.Api.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class UserWithoutPassword
     {
-        public string Name { get; set; }
+        public string Username { get; set; }
+        public string Token { get; set; }
     }
 }

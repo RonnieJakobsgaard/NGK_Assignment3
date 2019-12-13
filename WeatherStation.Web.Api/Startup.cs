@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection.Metadata;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherStation.Web.Api.Data;
 using WeatherStation.Web.Api.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using WeatherStation.Web.Api.Models;
 using SignalRChat.Hubs;
+using WeatherStation.Web.Api.Helpers;
+
 
 namespace WeatherStation.Web.Api
 {
@@ -36,11 +39,6 @@ namespace WeatherStation.Web.Api
                 options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContext")));
 
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
-
             services.AddSingleton<MeasurementService>();
 
             services.AddCors();
@@ -48,17 +46,32 @@ namespace WeatherStation.Web.Api
             
             services.AddSignalR();
 
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-            });                
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = "JwtBearer";
+                    options.DefaultChallengeScheme = "JwtBearer";
+                })
+                .AddJwtBearer("JwtBearer", jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes("This is the best SecretKey Ever !should be moved out of here!")),
 
-            
-            }
+                        ValidateIssuer = true,
+                        ValidIssuer = "WeatherStationApi",
+
+                        ValidateAudience = true,
+                        ValidAudience = "WeatherStation",
+
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromMinutes(5)
+                    };
+                });
+
+            services.AddSingleton<IAccountService, AccountService>();
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -79,6 +92,9 @@ namespace WeatherStation.Web.Api
 
             app.UseAuthorization();
 
+
+
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -94,8 +110,8 @@ namespace WeatherStation.Web.Api
                     .AllowCredentials()
                 );
 
-            //app.UseMvc();
             app.UseAuthentication();
+            //app.UseMvc();
 
 
         }
