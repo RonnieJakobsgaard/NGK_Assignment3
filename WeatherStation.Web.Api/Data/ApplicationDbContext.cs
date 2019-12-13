@@ -6,11 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WeatherStation.Web.Api.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace WeatherStation.Web.Api.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext()
         {
@@ -35,7 +34,7 @@ namespace WeatherStation.Web.Api.Data
 
         public DbSet<Measurement> Measurements { get; set; }
         public DbSet<LocalWeatherStation> WeatherStations { get; set; }
-        public DbSet<User> users { get; set; }
+        public DbSet<User> Users { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,29 +44,19 @@ namespace WeatherStation.Web.Api.Data
 
 
             modelBuilder.Entity<LocalWeatherStation>()
-                .HasKey(k => new { k.Name });
+                .HasKey(k => new { k.WeatherStationId });
 
             modelBuilder.Entity<User>()
-                .HasKey(k => new {k.UserName });
+                .HasKey(k => new {k.Username});
 
-
-
-
+            modelBuilder.Entity<User>()
+                .Property(id => id.UserId)
+                .ValueGeneratedOnAdd();
 
             // One To Many
             modelBuilder.Entity<LocalWeatherStation>()
                 .HasMany<Measurement>(m => m.Measurements)
                 .WithOne(m => m.LocalWeatherStation);
-
-
-
-
-           
-            modelBuilder.Entity<User>()
-                .HasMany<LocalWeatherStation>(u => u.WeatherStations)
-                .WithOne(u => u.User);
-
-
 
 
             base.OnModelCreating(modelBuilder);

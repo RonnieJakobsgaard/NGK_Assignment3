@@ -7,21 +7,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WeatherStation.Web.Api.Models;
 using Microsoft.AspNetCore.Identity;
+using WeatherStation.Web.Api.Services;
 
 
 namespace WeatherStation.Web.Api.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IAccountService _accountService;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(IAccountService accountService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _accountService = accountService;
         }
 
-        
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] AuthenticationUserModel model)
+        {
+            var user = _accountService.Authenticate(model.Username, model.Password);
+
+            if (user == null)
+            {
+                return BadRequest(new {message = "Username or Password is incorrect"});
+            }
+
+            return Ok(user);
+        }
     }
 }

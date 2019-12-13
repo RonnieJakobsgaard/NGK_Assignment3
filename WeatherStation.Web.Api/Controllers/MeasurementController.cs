@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
+using JWT;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using WeatherStation.Web.Api.Models;
 using WeatherStation.Web.Api.Services;
 
@@ -121,17 +127,17 @@ namespace WeatherStation.Web.Api.Controllers
         }
 
         // POST: Measurement/Create
+        [Authorize(AuthenticationSchemes = "JwtBearer")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Measurement measurement)
+        public ActionResult Create([FromBody] Measurement measurement)
         {
             try
             {
                 // TODO: Add insert logic here
-
                 _measurementService.Create(measurement);
 
 
+                
                 return RedirectToAction(nameof(Index));
             }
             catch

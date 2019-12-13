@@ -7,12 +7,11 @@ namespace WeatherStation.Web.Api.Models
 {
     public class LocalWeatherStation
     {
+        public int WeatherStationId { get; set; }
         public string Name { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
 
-        //user relation
-        public User User { get; set; }
 
         // Many measurements
         public List<Measurement> Measurements { get; set; }

@@ -10,21 +10,23 @@ using WeatherStation.Web.Api.Data;
 namespace WeatherStation.Web.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191201181804_NameEdit")]
-    partial class NameEdit
+    [Migration("20191212224631_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.1")
+                .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("WeatherStation.Web.Api.Models.LocalWeatherStation", b =>
                 {
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WeatherStationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -32,7 +34,10 @@ namespace WeatherStation.Web.Api.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
-                    b.HasKey("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("WeatherStationId");
 
                     b.ToTable("WeatherStations");
                 });
@@ -50,8 +55,8 @@ namespace WeatherStation.Web.Api.Migrations
                     b.Property<float>("Humidity")
                         .HasColumnType("real");
 
-                    b.Property<string>("LocalWeatherStationName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("LocalWeatherStationWeatherStationId")
+                        .HasColumnType("int");
 
                     b.Property<float>("Temperature")
                         .HasColumnType("real");
@@ -61,16 +66,34 @@ namespace WeatherStation.Web.Api.Migrations
 
                     b.HasKey("MeasurementId");
 
-                    b.HasIndex("LocalWeatherStationName");
+                    b.HasIndex("LocalWeatherStationWeatherStationId");
 
                     b.ToTable("Measurements");
+                });
+
+            modelBuilder.Entity("WeatherStation.Web.Api.Models.User", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.HasKey("Username");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WeatherStation.Web.Api.Models.Measurement", b =>
                 {
                     b.HasOne("WeatherStation.Web.Api.Models.LocalWeatherStation", "LocalWeatherStation")
                         .WithMany("Measurements")
-                        .HasForeignKey("LocalWeatherStationName");
+                        .HasForeignKey("LocalWeatherStationWeatherStationId");
                 });
 #pragma warning restore 612, 618
         }
