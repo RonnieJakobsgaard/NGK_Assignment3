@@ -18,7 +18,7 @@ namespace WeatherStation.Web.Api.Controllers
     [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly IAccountService _accountService;
+        public IAccountService _accountService;
 
         public AccountController(IAccountService accountService)
         {
@@ -34,7 +34,7 @@ namespace WeatherStation.Web.Api.Controllers
             {
                 return BadRequest(new {message = "Username or Password is incorrect"});
             }
-
+            
             return Ok(user);
         }
 
