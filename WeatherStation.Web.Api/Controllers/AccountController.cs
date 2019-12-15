@@ -16,7 +16,7 @@ namespace WeatherStation.Web.Api.Controllers
     [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly IAccountService _accountService;
+        public readonly IAccountService _accountService;
 
         public AccountController(IAccountService accountService)
         {

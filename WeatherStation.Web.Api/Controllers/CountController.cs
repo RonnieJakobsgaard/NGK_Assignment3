@@ -13,7 +13,7 @@ namespace WeatherStation.Web.Api.Controllers
     [ApiController]
     public class CountController : ControllerBase
     {
-        private readonly IHubContext<ChatHub> _chatHubContext;
+        public readonly IHubContext<ChatHub> _chatHubContext;
         private readonly counter _counter;
 
         public CountController(IHubContext<ChatHub> chatHubContext, counter counter)
