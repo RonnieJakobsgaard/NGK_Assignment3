@@ -34,11 +34,9 @@ namespace WeatherStation.Web.Api.Test
         [Test]
         public void SearchReturnMeasurement()
         {
-            var testmeasurement = new List<Measurement>();
-            var testmeasurement2 = new List<Measurement>();
            
-            var testresponse = _uut.Search("1", "2", "3");
-            Assert.Contains(, testmeasurement);
+            var testresponse = _uut.Search("0011", "2312", "03-05-2018");
+            Assert.IsInstanceOf<ViewResult>(testresponse);
 
         }
     }
