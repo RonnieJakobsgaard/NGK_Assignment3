@@ -10,7 +10,7 @@ using WeatherStation.Web.Api.Data;
 namespace WeatherStation.Web.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191212224631_Initial")]
+    [Migration("20191215123813_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

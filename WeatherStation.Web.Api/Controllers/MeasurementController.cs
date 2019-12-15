@@ -1,35 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
-using JWT;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.SignalR;
 using WeatherStation.Web.Api.Models;
 using WeatherStation.Web.Api.Services;
+using WeatherStation.Web.Api.Hubs;
 
 namespace WeatherStation.Web.Api.Controllers
 {
     public class MeasurementController : Controller
     {
         private readonly MeasurementService _measurementService;
+        private readonly IHubContext<ChatHub> _chatHub;
 
-        public MeasurementController(MeasurementService measurementService)
+        public MeasurementController(MeasurementService measurementService, IHubContext<ChatHub> chatHubContext)
         {
             _measurementService = measurementService;
+            _chatHub = chatHubContext;
         }
 
         // GET: Measurement
         public ActionResult Index()
         {
-            return View(_measurementService.Get());
+            var measurements = _measurementService.Get();
+
+            if (measurements.Count == 0)
+            {
+                return NotFound();
+            }
+
+            var view = new List<MeasurementViewModel>();
+
+            foreach (var measurement in measurements)
+            {
+                var m = new MeasurementViewModel
+                {
+                    Time = measurement.Time,
+                    Temperature = measurement.Temperature,
+                    AirPressure = measurement.AirPressure,
+                    Humidity = measurement.Humidity
+                };
+
+                if (measurement.LocalWeatherStation != null)
+                {
+                    m.WeatherStationName = measurement.LocalWeatherStation.Name;
+                }
+
+                view.Add(m);
+            }
+
+            return Json(view);
         }
 
 
@@ -43,7 +65,7 @@ namespace WeatherStation.Web.Api.Controllers
             }
 
             var measurements = new List<Measurement>();
-            var measurementsToDisplay = new List<Measurement>();
+            var measurementsToDisplay = new List<MeasurementViewModel>();
 
             if (!string.IsNullOrEmpty(startTime) && !string.IsNullOrEmpty(endTime))
             {
@@ -56,7 +78,21 @@ namespace WeatherStation.Web.Api.Controllers
                 {
                     if (measurement.Time.TimeOfDay >= st && measurement.Time.TimeOfDay <= et)
                     {
-                        measurementsToDisplay.Add(measurement);
+                        var mvm = new MeasurementViewModel
+                        {
+                            Time = measurement.Time,
+                            AirPressure = measurement.AirPressure,
+                            Humidity = measurement.Humidity,
+                            Temperature = measurement.Temperature
+                        };
+                        
+
+                        if (measurement.LocalWeatherStation != null)
+                        {
+                            mvm.WeatherStationName = measurement.LocalWeatherStation.Name;
+                        }
+
+                        measurementsToDisplay.Add(mvm);
                     }
                 }
             }
@@ -70,7 +106,21 @@ namespace WeatherStation.Web.Api.Controllers
                 {
                     if (measurement.Time.Date >= searchTime.Date && measurement.Time.Date <= searchTime.Date)
                     {
-                        measurementsToDisplay.Add(measurement);
+                        var mvm = new MeasurementViewModel
+                        {
+                            Time = measurement.Time,
+                            AirPressure = measurement.AirPressure,
+                            Humidity = measurement.Humidity,
+                            Temperature = measurement.Temperature
+                        };
+
+
+                        if (measurement.LocalWeatherStation != null)
+                        {
+                            mvm.WeatherStationName = measurement.LocalWeatherStation.Name;
+                        }
+
+                        measurementsToDisplay.Add(mvm);
                     }
                 }
             }
@@ -81,31 +131,17 @@ namespace WeatherStation.Web.Api.Controllers
             }
             else
             {
-                return View(measurementsToDisplay);
+                return Json(measurementsToDisplay);
             }
-        }
-
-        // GET: Measurement/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Measurement/Create
-        public ActionResult Create()
-        {
-            return View();
         }
 
         // POST: Measurement/Create
         [Authorize(AuthenticationSchemes = "JwtBearer")]
         [HttpPost]
-        public ActionResult Create([FromBody] MeasurementModel model)
+        public IActionResult Create([FromBody] MeasurementModel model)
         {
             try
             {
-                // TODO: Add insert logic here
-
                 var weatherStation = _measurementService.FindWeatherStation(model.Location.Name);
 
                 if (weatherStation == null)
@@ -124,7 +160,7 @@ namespace WeatherStation.Web.Api.Controllers
                     Temperature = model.Temperature,
                     AirPressure = model.AirPressure,
                     Humidity = model.Humidity,
-                    Time = DateTime.Now
+                    Time = DateTime.ParseExact(model.Time, "dd-MM-yyyy HH:mm:ss", null)
                 };
 
 
@@ -137,6 +173,9 @@ namespace WeatherStation.Web.Api.Controllers
 
                 _measurementService.Create(measurement);
 
+                // Notify Hub
+                _chatHub.Clients.All.SendAsync("ReceiveMessage", "New Data in ", model.Location.Name);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -145,50 +184,10 @@ namespace WeatherStation.Web.Api.Controllers
             }
         }
 
-        // GET: Measurement/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public IActionResult Client()
         {
             return View();
-        }
-
-        // POST: Measurement/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Measurement/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Measurement/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }

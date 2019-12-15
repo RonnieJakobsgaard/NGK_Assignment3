@@ -1,10 +1,9 @@
 ﻿//using Microsoft.AspNet.SignalR.Hubs;
 
-using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
-namespace SignalRChat.Hubs
+namespace WeatherStation.Web.Api.Hubs
 {
     public class ChatHub : Hub
     {

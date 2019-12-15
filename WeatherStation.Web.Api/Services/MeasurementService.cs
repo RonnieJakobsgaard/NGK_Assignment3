@@ -66,5 +66,10 @@ namespace WeatherStation.Web.Api.Services
         {
             return _db.WeatherStations.SingleOrDefault(w => w.Name == name);
         }
+
+        public List<LocalWeatherStation> GetAllWeatherStations()
+        {
+            return _db.WeatherStations.ToList();
+        }
     }
 }

@@ -10,13 +10,15 @@ using Microsoft.IdentityModel.Tokens;
 using WeatherStation.Web.Api.Data;
 using WeatherStation.Web.Api.Helpers;
 using WeatherStation.Web.Api.Models;
+using static BCrypt.Net.BCrypt;
+using BCrypt.Net;
 
 namespace WeatherStation.Web.Api.Services
 {
     public interface IAccountService
     {
         UserWithoutPassword Authenticate(string username, string password);
-        IEnumerable<User> GetAll();
+        UserWithoutPassword Create(string username, string password);
     }
 
     public class AccountService : IAccountService
@@ -30,9 +32,9 @@ namespace WeatherStation.Web.Api.Services
 
         public UserWithoutPassword Authenticate(string username, string password)
         {
-            var user = _db.Users.SingleOrDefault(u => u.Username == username && u.Password == password);
+            var user = _db.Users.SingleOrDefault(u => u.Username == username);
 
-            if (user == null)
+            if (!Verify(password, user.Password))
             {
                 return null;
             }
@@ -64,9 +66,20 @@ namespace WeatherStation.Web.Api.Services
             };
         }
 
-        public IEnumerable<User> GetAll()
+        public UserWithoutPassword Create(string username, string password)
         {
-            return _db.Users;
+            var hash = HashPassword(password);
+
+            var user = new User
+            {
+                Username = username,
+                Password = hash
+            };
+
+            _db.Users.Add(user);
+            _db.SaveChanges();
+
+            return Authenticate(username, password);
         }
     }
 }

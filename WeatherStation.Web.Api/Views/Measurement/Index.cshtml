@@ -1,37 +1,16 @@
-﻿@model IEnumerable<WeatherStation.Web.Api.Models.Measurement>
+﻿@model IEnumerable<WeatherStation.Web.Api.Models.MeasurementViewModel>
 
 @{
-    ViewData["Title"] = "WeatherStation Data";
+    ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
-
-<!--
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
--->
-<form asp-controller="Measurement" asp-action="Search" method="get">
-    <p>
-        Date: <input type="text" name="date" placeholder="dd-mm-yyyy" style="margin-left: 5px" />
-        <input type="submit" value="Filter" />
-    </p>
-</form>
-
-<form asp-controller="Measurement" asp-action="Search" method="get">
-    <p>
-        StartTime: <input type="text" name="startTime" placeholder="hh-mm" style="margin-left: 5px"/>
-        EndTime: <input type="text" name="endTime" placeholder="hh-mm" style="margin-left: 5px"/>
-        <input type="submit" value="Filter"/> 
-    </p>
-</form>
-
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.LocalWeatherStation)
+                @Html.DisplayNameFor(model => model.WeatherStationName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Time)
@@ -52,7 +31,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.LocalWeatherStation.Name)
+                @Html.DisplayFor(modelItem => item.WeatherStationName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Time)
@@ -65,11 +44,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AirPressure)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MeasurementId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MeasurementId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MeasurementId">Delete</a>
             </td>
         </tr>
 }

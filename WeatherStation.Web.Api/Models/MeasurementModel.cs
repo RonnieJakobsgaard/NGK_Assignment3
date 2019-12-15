@@ -13,6 +13,7 @@ namespace WeatherStation.Web.Api.Models
         public float Temperature { get; set; }
         public float Humidity { get; set; }
         public float AirPressure { get; set; }
+        public string Time { get; set; }
     }
 
     public class Place

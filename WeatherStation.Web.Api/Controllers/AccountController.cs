@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using WeatherStation.Web.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using WeatherStation.Web.Api.Services;
+using static BCrypt.Net.BCrypt;
+using BCrypt.Net;
 
 
 namespace WeatherStation.Web.Api.Controllers
@@ -34,6 +36,21 @@ namespace WeatherStation.Web.Api.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpPost("Create")]
+        public IActionResult Create([FromBody] AuthenticationUserModel model)
+        {
+            var user =  _accountService.Create(model.Username, model.Password);
+
+            if (user == null)
+            {
+                return BadRequest(new { message = "Something went wrong, plz try again!" });
+            }
+            else
+            {
+                return Ok(user);
+            }
         }
     }
 }

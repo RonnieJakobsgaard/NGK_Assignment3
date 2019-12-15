@@ -14,8 +14,8 @@ using WeatherStation.Web.Api.Services;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using WeatherStation.Web.Api.Models;
-using SignalRChat.Hubs;
 using WeatherStation.Web.Api.Helpers;
+using WeatherStation.Web.Api.Hubs;
 
 
 namespace WeatherStation.Web.Api
@@ -45,7 +45,6 @@ namespace WeatherStation.Web.Api
             services.AddCors();
             services.AddMvc();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); // Er denne nødvendig??
             services.AddSignalR();
             services.AddSingleton<counter>();
 
