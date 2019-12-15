@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NUnit.Framework;
 using NSubstitute;
 using WeatherStation.Web.Api.Models;
 using WeatherStation.Web.Api.Controllers;
+using WeatherStation.Web.Api.Hubs;
 using WeatherStation.Web.Api.Services;
 
 namespace WeatherStation.Web.Api.Test
@@ -19,7 +21,8 @@ namespace WeatherStation.Web.Api.Test
         public void SetUp()
         {
             _measurementService = Substitute.For<MeasurementService>();
-            _uut = new MeasurementController(_measurementService);
+
+            _uut = new MeasurementController(_measurementService, Substitute.For<IHubContext<ChatHub>>());
         }
 
         [Test]
@@ -36,7 +39,7 @@ namespace WeatherStation.Web.Api.Test
         {
            
             var testresponse = _uut.Search("0011", "2312", "03-05-2018");
-            Assert.IsInstanceOf<ViewResult>(testresponse);
+            Assert.IsInstanceOf<JsonResult>(testresponse);
 
         }
     }
