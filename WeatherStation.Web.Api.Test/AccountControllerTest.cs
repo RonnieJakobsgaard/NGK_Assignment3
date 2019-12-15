@@ -6,6 +6,9 @@ using WeatherStation.Web.Api.Services;
 using NSubstitute;
 using WeatherStation.Web.Api.Controllers;
 using WeatherStation.Web.Api.Models;
+using System.Web.Http.Results;
+using NSubstitute.ReturnsExtensions;
+using BadRequestResult = Microsoft.AspNetCore.Mvc.BadRequestResult;
 
 namespace WeatherStation.Web.Api.Test
 {
@@ -26,22 +29,20 @@ namespace WeatherStation.Web.Api.Test
             _uut = new AccountController(_accountService);
         }
 
-        //[Test]
-        //public void IsAuthenticated()
-        //{
-        //    _authenticationUserModel.Username
-        //    _uut.Authenticate(_authenticationUserModel);
-
-
-        //}
+        [Test]
+        public void UserIsNotNull()
+        {
+            _accountService.Authenticate(null, null).Returns(new UserWithoutPassword());
+            var testresponse = _uut.Authenticate(_authenticationUserModel);
+            Assert.IsInstanceOf<OkObjectResult>(testresponse);
+        }
 
         [Test]
         public void UserIsNull()
         {
-            var response = _uut.Authenticate(null);
-            Assert.IsInstanceOf<BadRequestObjectResult>(response);
-            Assert.AreEqual("Username or Password is incorrect", response);
+            var testreponse = _uut.Authenticate(_authenticationUserModel);
 
+            Assert.IsInstanceOf<BadRequestObjectResult>(testreponse);
         }
     }
 }
